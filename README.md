@@ -22,6 +22,11 @@ E2 I2
 Where `NExcit` is an the number of excitations (no space between `#` and number),
 `TypeSpec` can be one of `abs, ir, cd, vcd`, and `E` must be in units proportional to the energy (energies in eV or wavenumbers in inverse centimeter are good choices; wavelengths in nanometers are *bad*). The intensity should be 
 given as dimensionless oscillator strengths for absorption, or rotatory strengths in 10E-40 cgs units.
+The energy needs to be given in units of electronvolt if you
+want absolute intensities. The hardcoded
+conversion factors for the absorption coefficient and CD intensity
+in liter/(mol cm) are from Pulm et al., Chem. Phys. 1997, 224, 143.
+
 The `--help` option gives a preview of the functionality.
 Some tips:
 

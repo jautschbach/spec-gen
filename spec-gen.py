@@ -43,7 +43,7 @@ def lorentz(gamma, x, x0):
     return gamma / (2.0 * pi * ((x - x0) ** 2.0 + (gamma / 2.0) ** 2.0))
 
 def abs_int(x):
-    return 3.48e-2
+    return 3.48e-5
 
 def cd_int(x):
     return 22.97e0 / x
