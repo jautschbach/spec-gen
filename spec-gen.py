@@ -48,8 +48,16 @@ def abs_int(x):
 def cd_int(x):
     return 22.97e0 / x
 
+def ev2cm():
+    return 8065.54e0
+
+def var_sigma(x0):
+    return 7.5e0/ev2cm() * sqrt(x0*ev2cm())
+
 def em_int(x):
     return NotImplementedError
+
+
 
 
 #####################
@@ -94,12 +102,14 @@ try:
     if arguments['--padding']:
         try:
             factor = int(arguments['--padding'])
-            padding = broaden * factor
+            padding = abs(broaden) * factor
         except ValueError as err:
             exit('--> Error: {}\nHow to Fix: Padding value should be an integer number.'.format(err))
     else:
         factor = 5
-        padding = broaden * factor
+        padding = abs(broaden) * factor
+
+    # check if broadening is negative, then use empirical formula
     
     # Now we can read input file (let's see if it exists!)
     if not isfile(arguments['--input']):
@@ -143,7 +153,10 @@ try:
             for i in arange(energy_range[0], energy_range[1] + delta_e, delta_e):
                 imp_val = 0.0
                 for j in range(num_exc):
-                    for_int = impulses[j] * gauss(broaden, i, energies[j]) / abs_int(i)
+                    sigma = broaden
+                    if sigma < 0:
+                        sigma = var_sigma(energies[j])
+                    for_int = impulses[j] * gauss(sigma, i, energies[j]) / abs_int(i)
                     imp_val += for_int
                     integral += for_int
                 print(('{} {}'.format(i, imp_val)))                    
@@ -151,7 +164,10 @@ try:
             for i in arange(energy_range[0], energy_range[1] + delta_e, delta_e):
                 imp_val = 0.0
                 for j in range(num_exc):
-                    for_int = impulses[j] * lorentz(broaden, i, energies[j]) / abs_int(i)
+                    sigma = broaden
+                    if sigma < 0:
+                        sigma = var_sigma(energies[j])
+                    for_int = impulses[j] * lorentz(sigma, i, energies[j]) / abs_int(i)
                     imp_val += for_int
                     integral += for_int
                 print(('{} {}'.format(i, imp_val)))                    
@@ -160,7 +176,10 @@ try:
             for i in arange(energy_range[0], energy_range[1] + delta_e, delta_e):
                 imp_val = 0.0
                 for j in range(num_exc):
-                    for_int = impulses[j] * gauss(broaden, i, energies[j]) / cd_int(i)
+                    sigma = broaden
+                    if sigma < 0:
+                        sigma = var_sigma(energies[j])
+                    for_int = impulses[j] * gauss(sigma, i, energies[j]) / cd_int(i)
                     imp_val += for_int
                     integral += for_int / energies[j]
                 print(('{} {}'.format(i, imp_val)))                    
@@ -168,7 +187,10 @@ try:
             for i in arange(energy_range[0], energy_range[1] + delta_e, delta_e):
                 imp_val = 0.0
                 for j in range(num_exc):
-                    for_int = impulses[j] * lorentz(broaden, i, energies[j]) / cd_int(i)
+                    sigma = broaden
+                    if sigma < 0:
+                        sigma = var_sigma(energies[j])
+                    for_int = impulses[j] * lorentz(sigma, i, energies[j]) / cd_int(i)
                     imp_val += for_int
                     integral += for_int / energies[j]
                 print(('{} {}'.format(i, imp_val)))                    
