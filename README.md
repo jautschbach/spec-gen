@@ -8,6 +8,7 @@ What types of spectra can `spec-gen.py` handle?
 
 * Electronic absorption and Circular Dichroism (CD)
 * Infrared vivrational spectra (IR) and Vibrational Circular Dichroism (VCD)
+* MCD A and B terms
 * Emission and Circularly Polarized Luminescence (to be added, not yet available)
 
 The input must be in the format:
@@ -20,7 +21,7 @@ E2 I2
 ```
 
 Where `NExcit` is an the number of excitations (no space between `#`
-and number), `TypeSpec` can be one of `abs, ir, cd, vcd`, and `E` must
+and number), `TypeSpec` can be one of `abs, ir, cd, vcd, mcda, mcdb`, and `E` must
 be in units proportional to the energy (energies in eV or wavenumbers
 in inverse centimeter are good choices; wavelengths in nanometers are
 *bad*). The intensity should be given as dimensionless oscillator
