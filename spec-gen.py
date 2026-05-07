@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" spec-gen.py -- A simple spectral convolution program for IR, ECD, VCD, and CPL
+""" spec-gen.py -- A simple spectral convolution program for IR, ECD, VCD, MCD A, MCD B and CPL
 Usage:
     spec-gen.py [options]
         (-i <file.spec> | --input <file.spec>)
@@ -42,6 +42,9 @@ def gauss(sigma, x, x0):
 def lorentz(gamma, x, x0):
     return gamma / (2.0 * pi * ((x - x0) ** 2.0 + (gamma / 2.0) ** 2.0))
 
+def gauss_derivative(sigma, x, x0):
+    return - (x - x0) / (sigma**3 * sqrt(2.0 * pi)) * exp(-(x - x0)**2 / (2.0 * sigma**2))
+
 def abs_int(x):
     return 3.48e-5
 
@@ -64,7 +67,7 @@ def em_int(x):
 # Necessary Imports #
 #####################
 from docopt import docopt
-from math import exp, pi, sqrt 
+from math import exp, pi, sqrt, log 
 from numpy import arange
 from os.path import isfile
 from sys import exit, stderr
@@ -197,7 +200,47 @@ try:
                     for_int = impulses[j] * lorentz(sigma, i, energies[j]) / cd_int(i)
                     imp_val += for_int
                     integral += for_int / energies[j]
-                print(('{} {}'.format(i, imp_val)))                    
+                print(('{} {}'.format(i, imp_val)))   
+    elif type_spec in ['mcda', 'mcdb']:
+        energies = []
+        intensities = []
+        with open(arguments['--input'], 'r') as f:
+            header = f.readline()
+            for line in f:
+                if line.strip().startswith("#") or not line.strip():
+                    continue
+                parts = line.split()
+                if len(parts) < 2:
+                    continue
+                energies.append(float(parts[0]))
+                intensities.append(float(parts[1]))
+
+        if len(energies) == 0 or len(intensities) == 0:
+            exit(f"Error: No valid {type_spec.upper()} data found in input file.")
+
+        energy_range = [min(energies) - padding, max(energies) + padding]
+        delta_e = (energy_range[1] - energy_range[0]) / (num_points)
+
+        for omega in arange(energy_range[0], energy_range[1] + delta_e, delta_e):
+            val = 0.0
+            prefactor = (pi / (4500*log(10) )) * 10000 * 0.001480279
+            H2eV = 27.211386245981 # This is the newest NIST value for the Hartree to eV conversion
+            for e, inten in zip(energies, intensities):
+                if arguments['--gaussian']:
+                    if type_spec == 'mcda': #Prefactor assumes au, adjusted by H2eV to account for derivative E dependence
+                        val += (inten * -prefactor*H2eV)* omega * gauss_derivative(broaden, omega, e)
+                    else:
+                        val += (inten * prefactor)* omega * gauss(broaden, omega, e)
+                else:
+                    val += (inten * prefactor) * lorentz(broaden, omega, e)
+            print(f"{omega} {val}")
+
+    elif type_spec == 'mcd':
+        exit("Please specify the MCD term for broadening (mcda or mcdb)")
+  
+    elif type_spec == 'mcdc':
+        exit("This is not yet implemented in this code")
+
     elif type_spec in ['em', 'cpl']:
         exit("Error: Emission spectra are currently not supported")
         #if arguments['--gaussian']:
