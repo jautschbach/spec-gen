@@ -8,7 +8,7 @@ What types of spectra can `spec-gen.py` handle?
 
 * Electronic absorption and Circular Dichroism (CD)
 * Infrared vivrational spectra (IR) and Vibrational Circular Dichroism (VCD)
-* MCD A and B terms
+* MCD A, B and C terms
 * Emission and Circularly Polarized Luminescence (to be added, not yet available)
 
 The input must be in the format:
@@ -21,12 +21,12 @@ E2 I2
 ```
 
 Where `NExcit` is an the number of excitations (no space between `#`
-and number), `TypeSpec` can be one of `abs, ir, cd, vcd, mcda, mcdb`, and `E` must
+and number), `TypeSpec` can be one of `abs, ir, cd, vcd, mcda, mcdb, mcdc` and E` must
 be in units proportional to the energy (energies in eV or wavenumbers
 in inverse centimeter are good choices; wavelengths in nanometers are
 *bad*). The intensity should be given as dimensionless oscillator
 strengths for absorption, rotatory strengths in 10E-40 cgs units for cd, or
-molar ellipticity [ $\theta$ ] for mcd A/B.
+molar ellipticity [ $\theta$ ] for mcd A/B/C.
 The energy needs to be given in units of electronvolt (eV) if you want
 absolute intensities. The hardcoded
 conversion factors for the absorption coefficient and CD intensity
@@ -58,3 +58,5 @@ $$
 with a FWHM of $\gamma$. The `spec-gen.py` input parameter for Lorentzian broadening is equal to $\gamma$.
 
 Spectra are padded beyond the lowest and highest transition energy. The default padding is 5 times the chosen broadening (its absolute value, rather). You can change the default with the `--padding` option. If the broadening is given as a negative number, to trigger the empirical broadening formula described above, the absolute value is used to generate the padding. 
+
+Temperature and Boltzmann factor terms for mcd C term spectra are expected to be integrated into the input data prior to broadening. Ensure your data is temperature corrected prior to use of this script.  

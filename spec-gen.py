@@ -153,7 +153,7 @@ try:
     imp_val = 0.0
     integral = 0.0
 
-    # There are three types of spectra we can broaden, (abs/ir, cd/ecd/vcd, or em/cpl)
+    # There are four types of spectra we can broaden, (abs/ir, cd/ecd/vcd, em/cpl, and mcd (a,b,c))
     #   and two types of broadening functions gaussian or lorentzian
     if type_spec in ['abs', 'ir']:
         if arguments['--gaussian']:
@@ -201,7 +201,7 @@ try:
                     imp_val += for_int
                     integral += for_int / energies[j]
                 print(('{} {}'.format(i, imp_val)))   
-    elif type_spec in ['mcda', 'mcdb']:
+    elif type_spec in ['mcda', 'mcdb','mcdc']: #NOTE: mcdc terms assume temperature/boltzmann factors are included pre broadening
         energies = []
         intensities = []
         with open(arguments['--input'], 'r') as f:
@@ -236,10 +236,7 @@ try:
             print(f"{omega} {val}")
 
     elif type_spec == 'mcd':
-        exit("Please specify the MCD term for broadening (mcda or mcdb)")
-  
-    elif type_spec == 'mcdc':
-        exit("This is not yet implemented in this code")
+        exit("Please specify the MCD term for broadening (mcda/mcdb/mcdc)")
 
     elif type_spec in ['em', 'cpl']:
         exit("Error: Emission spectra are currently not supported")
