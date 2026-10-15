@@ -21,7 +21,7 @@ E2 I2
 ```
 
 Where `NExcit` is an the number of excitations (no space between `#`
-and number), `TypeSpec` can be one of `abs, ir, cd, vcd, mcda, mcdb, mcdc' and `E` must
+and number), `TypeSpec` can be one of `abs, ir, cd, vcd, mcda, mcdb, mcdc` and E` must
 be in units proportional to the energy (energies in eV or wavenumbers
 in inverse centimeter are good choices; wavelengths in nanometers are
 *bad*). The intensity should be given as dimensionless oscillator
